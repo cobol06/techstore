@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechStore — Интернет-магазин современной электроники</title>
+  <style>
+    /* =========================================
+       1. CSS-ПЕРЕМЕННЫЕ (РОСКОШНЫЙ МАКСИМУМ)
+       ========================================= */
+    :root {
+      --primary-color: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg-main: #f8fafc;
+      --bg-card: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --accent-color: #f59e0b;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --shadow-base: 0 4px 6px -1px rgba(0, 0, 0, 0.07);
+      --shadow-hover: 0 10px 15px -3px rgba(37, 99, 235, 0.15);
+      --transition-speed: 0.3s ease;
+      --gap-base: 20px;
+    }
+
+    /* Базовый сброс */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* =========================================
+       2. HEADER & NAV (FLEXBOX)
+       ========================================= */
+    .header {
+      background-color: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header__container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px var(--gap-base);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header__logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+
+    .nav__list {
+      display: flex;
+      list-style: none;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .nav__link {
+      text-decoration: none;
+      color: var(--text-main);
+      font-weight: 500;
+      transition: color var(--transition-speed);
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Сложные селекторы & hover/focus */
+    .nav__link:hover {
+      color: var(--primary-color);
+    }
+
+    .nav__link:focus-visible {
+      outline: 2px solid var(--primary-color);
+    }
+
+    /* =========================================
+       3. ПРЕИМУЩЕСТВА (FLEXBOX)
+       ========================================= */
+    .features {
+      background-color: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      padding: 24px var(--gap-base);
+    }
+
+    .features__list {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: var(--gap-base);
+      list-style: none;
+    }
+
+    .features__item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .features__icon {
+      font-size: 1.5rem;
+      background: #eff6ff;
+      padding: 10px;
+      border-radius: 50%;
+    }
+
+    /* =========================================
+       4. ОБЩИЙ LAYOUT (CSS GRID: ASIDE + MAIN)
+       ========================================= */
+    .layout-wrapper {
+      max-width: 1200px;
+      margin: 32px auto;
+      padding: 0 var(--gap-base);
+      flex: 1;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    /* =========================================
+       5. САЙДБАР (ASIDE)
+       ========================================= */
+    .sidebar {
+      background-color: var(--bg-card);
+      padding: 20px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-base);
+    }
+
+    .sidebar__title {
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 8px;
+    }
+
+    .sidebar__group {
+      margin-bottom: 20px;
+    }
+
+    .sidebar__group-title {
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+      color: var(--text-muted);
+    }
+
+    .sidebar__label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    /* =========================================
+       6. СЕТКА ТОВАРОВ (CSS GRID)
+       ========================================= */
+    .content__header {
+      margin-bottom: 24px;
+    }
+
+    .content__title {
+      font-size: 1.75rem;
+      font-weight: 800;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 24px;
+    }
+
+    /* Карточка товара (ARTICLE) */
+    .card {
+      background-color: var(--bg-card);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      padding: 16px;
+      display: flex;
+      flex-direction: column; /* Flexbox внутри карточки */
+      box-shadow: var(--shadow-base);
+      transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+      overflow: hidden;
+    }
+
+    /* Интерактив ховера (Роскошный максимум) */
+    .card:hover {
+      transform: translateY(-5px) scale(1.01);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--primary-color);
+    }
+
+    /* Селектор :nth-child(even) для демонстрации навыка */
+    .card:nth-child(even) .card__badge {
+      background-color: var(--accent-color);
+    }
+
+    .card__image-box {
+      width: 100%;
+      height: 180px;
+      background-color: #f1f5f9;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .card__badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: var(--primary-color);
+      color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: bold;
+      padding: 4px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .card__title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .card__description {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      flex-grow: 1; /* Прижимает цену и кнопку вниз */
+    }
+
+    .card__footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+    }
+
+    .card__price {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .card__btn {
+      background-color: var(--primary-color);
+      color: #ffffff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color var(--transition-speed), transform var(--transition-speed);
+    }
+
+    .card__btn:hover {
+      background-color: var(--primary-hover);
+      transform: scale(1.05);
+    }
+
+    .card__btn:focus-visible {
+      outline: 3px solid #93c5fd;
+    }
+
+    /* =========================================
+       7. FOOTER (FLEXBOX)
+       ========================================= */
+    .footer {
+      background-color: #0f172a;
+      color: #94a3b8;
+      padding: 40px var(--gap-base) 24px;
+      margin-top: auto;
+    }
+
+    .footer__container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 24px;
+      margin-bottom: 16px;
+    }
+
+    .footer__nav {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .footer__link {
+      color: #94a3b8;
+      text-decoration: none;
+      transition: color var(--transition-speed);
+    }
+
+    .footer__link:hover {
+      color: #ffffff;
+    }
+
+    .footer__bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+      font-size: 0.85rem;
+    }
+
+    /* Адаптивность для мобильных */
+    @media (max-width: 768px) {
+      .layout-wrapper {
+        grid-template-columns: 1fr;
+      }
+      .features__list {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ХЕДЕР И НАВИГАЦИЯ -->
+  <header class="header">
+    <div class="header__container">
+      <a href="#" class="header__logo">TechStore</a>
+      <nav class="nav">
+        <ul class="nav__list">
+          <li><a href="#catalog" class="nav__link">Каталог</a></li>
+          <li><a href="#features" class="nav__link">Преимущества</a></li>
+          <li><a href="#about" class="nav__link">О магазине</a></li>
+          <li><a href="#contacts" class="nav__link">Контакты</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- СЕКЦИЯ ПРЕИМУЩЕСТВА (FLEXBOX) -->
+  <section class="features" id="features">
+    <ul class="features__list">
+      <li class="features__item">
+        <span class="features__icon">🚚</span>
+        <span>Бесплатная экспресс-доставка</span>
+      </li>
+      <li class="features__item">
+        <span class="features__icon">🛡️</span>
+        <span>Гарантия производителя 2 года</span>
+      </li>
+      <li class="features__item">
+        <span class="features__icon">💳</span>
+        <span>Оплата картой или частями</span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ОСНОВНАЯ ОБЛАСТЬ (GRID: САЙДБАР + КАТАЛОГ) -->
+  <div class="layout-wrapper">
+    
+    <!-- САЙДБАР С ФИЛЬТРАМИ (ASIDE) -->
+    <aside class="sidebar">
+      <h3 class="sidebar__title">Фильтры</h3>
+      
+      <div class="sidebar__group">
+        <h4 class="sidebar__group-title">Категории</h4>
+        <label class="sidebar__label"><input type="checkbox" checked> Ноутбуки</label>
+        <label class="sidebar__label"><input type="checkbox"> Смартфоны</label>
+        <label class="sidebar__label"><input type="checkbox"> Аксессуары</label>
+      </div>
+
+      <div class="sidebar__group">
+        <h4 class="sidebar__group-title">Бренд</h4>
+        <label class="sidebar__label"><input type="checkbox"> Apple</label>
+        <label class="sidebar__label"><input type="checkbox"> Asus</label>
+        <label class="sidebar__label"><input type="checkbox"> Samsung</label>
+      </div>
+    </aside>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ (MAIN) -->
+    <main class="content">
+      <header class="content__header">
+        <h1 class="content__title">Популярные товары</h1>
+      </header>
+
+      <!-- СЕТКА КАРТОЧЕК ТОВАРОВ (GRID) -->
+      <section class="products-grid" id="catalog">
+        
+        <article class="card">
+          <div class="card__image-box">
+            <span class="card__badge">Хит</span>
+            💻
+          </div>
+          <h2 class="card__title">Ультрабук Pro 14"</h2>
+          <p class="card__description">Мощный процессор последнего поколения, 16 ГБ RAM, тонкий алюминиевый корпус.</p>
+          <div class="card__footer">
+            <span class="card__price">89 990 ₽</span>
+            <button class="card__btn" type="button">В корзину</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card__image-box">
+            <span class="card__badge">Акция</span>
+            📱
+          </div>
+          <h2 class="card__title">Смартфон Horizon 5G</h2>
+          <p class="card__description">OLED-экран 120 Гц, тройная камера с оптической стабилизацией, зарядка 67 Вт.</p>
+          <div class="card__footer">
+            <span class="card__price">45 490 ₽</span>
+            <button class="card__btn" type="button">В корзину</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card__image-box">
+            <span class="card__badge">Хит</span>
+            🎧
+          </div>
+          <h2 class="card__title">Беспроводные наушники ANC</h2>
+          <p class="card__description">Активное шумоподавление, до 35 часов автономной работы и чистый бас.</p>
+          <div class="card__footer">
+            <span class="card__price">12 990 ₽</span>
+            <button class="card__btn" type="button">В корзину</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card__image-box">
+            <span class="card__badge">New</span>
+            ⌚
+          </div>
+          <h2 class="card__title">Смарт-часы Pulse Fit</h2>
+          <p class="card__description">Мониторинг сна, пульса и кислорода, влагозащита 5 ATM, GPS.</p>
+          <div class="card__footer">
+            <span class="card__price">18 990 ₽</span>
+            <button class="card__btn" type="button">В корзину</button>
+          </div>
+        </article>
+
+      </section>
+    </main>
+  </div>
+
+  <!-- ФУТЕР (FLEXBOX) -->
+  <footer class="footer">
+    <div class="footer__container">
+      <p class="footer__brand">© 2026 TechStore Inc.</p>
+      <ul class="footer__nav">
+        <li><a href="#" class="footer__link">Политика конфиденциальности</a></li>
+        <li><a href="#" class="footer__link">Условия сервиса</a></li>
+        <li><a href="#" class="footer__link">Поддержка</a></li>
+      </ul>
+    </div>
+    <div class="footer__bottom">
+      <p>Учебный проект по верстке: семантический HTML5, Flexbox, Grid и CSS-переменные.</p>
+    </div>
+  </footer>
+
+</body>
+</html>
